@@ -69,7 +69,11 @@ void Chip_23LCV1024::write(uint32_t address, byte *data, int length)
 
 void Chip_23LCV1024::write_byte(uint32_t address, byte data)
 {
-    write(address, &data, 1);
+    // Manually doing this because this improves performance.
+    uint32_t chip = address / CHIP_SIZE;
+    uint32_t chip_address = address % CHIP_SIZE;
+    byte *chip_data = new byte[1]{data};
+    write_single_chip(chip, chip_address, chip_data, 1);
 }
 
 void Chip_23LCV1024::write_single_chip(uint32_t chip, uint32_t address, byte data[], uint length)
@@ -141,8 +145,11 @@ void Chip_23LCV1024::read(uint32_t address, byte *(&data), int length)
 
 byte Chip_23LCV1024::read_byte(uint32_t address)
 {
+    uint32_t chip = address / CHIP_SIZE;
+    uint32_t chip_address = address % CHIP_SIZE;
     byte *data = new byte[1];
-    read(address, data, 1);
+
+    read_single_chip(chip, chip_address, data, 1);
 
     return data[0];
 }
