@@ -43,6 +43,10 @@ public:
     /**
      * @brief Reads bytes from the specified address.
      *
+     * WARNING: If you do not delete() your data array
+     * afterwards, or don't make your data array
+     * static, you will leak memory.
+     *
      * @param address The address to read from.
      * @param data The buffer to read the data into.
      * @param length The number of bytes to read.
@@ -76,7 +80,7 @@ private:
      * @param data The buffer to read the data into.
      * @param length The number of bytes to read.
      */
-    void read_single_chip(uint32_t chip, uint32_t address, byte *(&data), uint length);
+    void read_single_chip(uint32_t chip, uint32_t address, byte (&data)[], uint length);
 
     pin_t *cs;
     uint32_t cs_num;

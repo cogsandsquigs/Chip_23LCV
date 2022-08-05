@@ -8,8 +8,10 @@ Chip_23LCV1024 Memory;
 void setup()
 {
     Serial.begin(9600);
-    Memory.begin(A5);
+    Memory.begin(A4);
 }
+
+byte *data2 = new byte[4]; // This has to be static, otherwise it will leak memory.
 
 void loop()
 {
@@ -21,7 +23,6 @@ void loop()
 
     Memory.write(addr, data, 4);
 
-    byte *data2 = new byte[4];
     Memory.read(addr, data2, 4);
     Serial.print("Read: ");
     Serial.print(data2[0], HEX);

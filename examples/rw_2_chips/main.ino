@@ -11,6 +11,8 @@ void setup()
     Memory.begin(A5, A4);
 }
 
+byte *data2 = new byte[4];
+
 void loop()
 {
     delay(1000);
@@ -21,7 +23,6 @@ void loop()
 
     Memory.write(addr, data, 4);
 
-    byte *data2 = new byte[4];
     Memory.read(addr, data2, 4);
     Serial.print("Read: ");
     Serial.print(data2[0], HEX);
