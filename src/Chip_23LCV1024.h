@@ -24,7 +24,7 @@ public:
     void begin(pin_t cs1, pin_t cs2);
 
     /**
-     * @brief Writes a byte to the specified address.
+     * @brief Writes bytes to the specified address.
      *
      * @param address The address to write to.
      * @param data The data to write.
@@ -41,7 +41,7 @@ public:
     void write_byte(uint32_t address, byte data);
 
     /**
-     * @brief Reads a byte from the specified address.
+     * @brief Reads bytes from the specified address.
      *
      * @param address The address to read from.
      * @param data The buffer to read the data into.
