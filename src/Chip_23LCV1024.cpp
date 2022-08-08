@@ -43,7 +43,7 @@ void Chip_23LCV1024::write(uint32_t address, byte *data, int length)
     }
 
     // Write to each chip.
-    for (uint32_t i = chip; i < chip_count; i++)
+    for (uint32_t i = chip; i < (chip + chip_count); i++)
     {
         // Calculate the address to write to.
         uint32_t chip_address = address % CHIP_SIZE;
@@ -121,7 +121,7 @@ void Chip_23LCV1024::read(uint32_t address, byte *(&data), int length)
     byte read[length];
 
     // Read from each chip.
-    for (uint32_t i = chip; i < chip_count; i++)
+    for (uint32_t i = chip; i < (chip + chip_count); i++)
     {
         // Calculate the address to read from.
         uint32_t chip_address = address % CHIP_SIZE;
