@@ -36,7 +36,7 @@ void Chip_23LCV1024::write(uint32_t address, byte *data, int length)
     uint32_t remaining_bytes = length;
 
     // Calculate how many chips we need to write to.
-    uint32_t chip_count = (address + length) / CHIP_SIZE + 1;
+    uint32_t chip_count = ((address % CHIP_SIZE) + length) / CHIP_SIZE + 1;
     if (chip_count > cs_num)
     {
         chip_count = cs_num;
@@ -46,12 +46,11 @@ void Chip_23LCV1024::write(uint32_t address, byte *data, int length)
     for (uint32_t i = chip; i < chip_count; i++)
     {
         // Calculate the address to write to.
-        uint32_t chip_address = i == chip ? address % CHIP_SIZE : 0;
+        uint32_t chip_address = address % CHIP_SIZE;
 
         // Calculate the data to write.
         uint32_t data_start = length - remaining_bytes;
-        uint32_t data_end = data_start + ((CHIP_SIZE - chip_address) > remaining_bytes ? remaining_bytes : (CHIP_SIZE - chip_address));
-        uint32_t data_length = data_end - data_start;
+        uint32_t data_length = min((CHIP_SIZE - chip_address), remaining_bytes);
 
         // Collect the data.
         byte chip_data[data_length];
@@ -92,9 +91,9 @@ void Chip_23LCV1024::write_single_chip(uint32_t chip, uint32_t address, byte dat
 
     SPI.begin(cs[chip]);
     SPI.beginTransaction();
+    SPI.setDataMode(SPI_MODE0);
     digitalWrite(cs[chip], LOW);
-    byte tmp[length + 4];
-    SPI.transfer(writing, tmp, length + 4, nullptr);
+    SPI.transfer(writing, NULL, length + 4, nullptr);
     digitalWrite(cs[chip], HIGH);
     SPI.endTransaction();
     SPI.end();
@@ -113,7 +112,7 @@ void Chip_23LCV1024::read(uint32_t address, byte *(&data), int length)
     uint32_t remaining_bytes = length;
 
     // Calculate how many chips we need to read from.
-    uint32_t chip_count = (address + length) / CHIP_SIZE + 1;
+    uint32_t chip_count = ((address % CHIP_SIZE) + length) / CHIP_SIZE + 1;
     if (chip_count > cs_num)
     {
         chip_count = cs_num;
@@ -125,12 +124,11 @@ void Chip_23LCV1024::read(uint32_t address, byte *(&data), int length)
     for (uint32_t i = chip; i < chip_count; i++)
     {
         // Calculate the address to read from.
-        uint32_t chip_address = i == chip ? address % CHIP_SIZE : 0;
+        uint32_t chip_address = address % CHIP_SIZE;
 
         // Calculate the data to read.
         uint32_t data_start = length - remaining_bytes;
-        uint32_t data_end = data_start + ((CHIP_SIZE - chip_address) > remaining_bytes ? remaining_bytes : (CHIP_SIZE - chip_address));
-        uint32_t data_length = data_end - data_start;
+        uint32_t data_length = min((CHIP_SIZE - chip_address), remaining_bytes);
 
         // Read from the chip.
         read_single_chip(i, chip_address, read, data_length);
@@ -157,24 +155,21 @@ byte Chip_23LCV1024::read_byte(uint32_t address)
 
 void Chip_23LCV1024::read_single_chip(uint32_t chip, uint32_t address, byte (&data)[], uint length)
 {
-    byte allData[length + 4];
+    SPI.begin(cs[chip]);
+    SPI.setDataMode(SPI_MODE0);
 
-    allData[0] = 0x03; // Read command
+    digitalWrite(cs[chip], LOW);
+
+    SPI.transfer(0x03); // Read command
 
     // add the address to the data
-    allData[1] = (address >> 16) & 0xFF;
-    allData[2] = (address >> 8) & 0xFF;
-    allData[3] = address & 0xFF;
+    SPI.transfer((address >> 16) & 0xFF);
+    SPI.transfer((address >> 8) & 0xFF);
+    SPI.transfer(address & 0xFF);
 
-    SPI.begin(SPI_MODE_MASTER, cs[chip]);
-    digitalWrite(cs[chip], LOW);
-    byte ret[length + 4];
-    SPI.transfer(allData, ret, length + 4, nullptr);
+    SPI.transfer(NULL, data, length, nullptr);
+
     digitalWrite(cs[chip], HIGH);
-    SPI.end();
 
-    for (uint i = 0; i < length; i++)
-    {
-        data[i] = ret[i + 4];
-    }
+    SPI.end();
 }
