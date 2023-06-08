@@ -1,11 +1,11 @@
-#include "Chip_23LCV1024.h"
+#include "Chip_23LCV.h"
 #include "Particle.h"
 
 #define CHIP_SIZE 0x1FFFF
 
-Chip_23LCV1024::Chip_23LCV1024() {}
+Chip_23LCV::Chip_23LCV() {}
 
-void Chip_23LCV1024::begin(pin_t cs1)
+void Chip_23LCV::begin(pin_t cs1)
 {
     this->cs = new pin_t[1]{cs1};
     cs_num = 1;
@@ -13,7 +13,7 @@ void Chip_23LCV1024::begin(pin_t cs1)
     digitalWrite(cs1, HIGH);
 }
 
-void Chip_23LCV1024::begin(pin_t cs1, pin_t cs2)
+void Chip_23LCV::begin(pin_t cs1, pin_t cs2)
 {
     this->cs = new pin_t[2]{cs1, cs2};
     cs_num = 2;
@@ -23,7 +23,7 @@ void Chip_23LCV1024::begin(pin_t cs1, pin_t cs2)
     digitalWrite(cs2, HIGH);
 }
 
-void Chip_23LCV1024::write(uint32_t address, byte *data, int length)
+void Chip_23LCV::write(uint32_t address, byte *data, int length)
 {
     /**
      * Write to the specified address. If the data is longer than a single
@@ -67,7 +67,7 @@ void Chip_23LCV1024::write(uint32_t address, byte *data, int length)
     }
 }
 
-void Chip_23LCV1024::write_byte(uint32_t address, byte data)
+void Chip_23LCV::write_byte(uint32_t address, byte data)
 {
     // Manually doing this because this improves performance.
     uint32_t chip = address / CHIP_SIZE;
@@ -76,7 +76,7 @@ void Chip_23LCV1024::write_byte(uint32_t address, byte data)
     write_single_chip(chip, chip_address, chip_data, 1);
 }
 
-void Chip_23LCV1024::write_single_chip(uint32_t chip, uint32_t address, byte data[], uint length)
+void Chip_23LCV::write_single_chip(uint32_t chip, uint32_t address, byte data[], uint length)
 {
     byte writing[length + 4];
 
@@ -99,7 +99,7 @@ void Chip_23LCV1024::write_single_chip(uint32_t chip, uint32_t address, byte dat
     SPI.end();
 }
 
-void Chip_23LCV1024::read(uint32_t address, byte *(&data), int length)
+void Chip_23LCV::read(uint32_t address, byte *(&data), int length)
 {
     /**
      * Read from the specified address. If the data is longer than a single
@@ -143,7 +143,7 @@ void Chip_23LCV1024::read(uint32_t address, byte *(&data), int length)
     }
 }
 
-byte Chip_23LCV1024::read_byte(uint32_t address)
+byte Chip_23LCV::read_byte(uint32_t address)
 {
     uint32_t chip = address / CHIP_SIZE;
     uint32_t chip_address = address % CHIP_SIZE;
@@ -153,7 +153,7 @@ byte Chip_23LCV1024::read_byte(uint32_t address)
     return data[0];
 }
 
-void Chip_23LCV1024::read_single_chip(uint32_t chip, uint32_t address, byte (&data)[], uint length)
+void Chip_23LCV::read_single_chip(uint32_t chip, uint32_t address, byte (&data)[], uint length)
 {
     SPI.begin(cs[chip]);
     SPI.setDataMode(SPI_MODE0);

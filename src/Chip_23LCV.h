@@ -1,12 +1,12 @@
 #include "Particle.h"
 
-class Chip_23LCV1024
+class Chip_23LCV
 {
 public:
     /**
      * @brief Constructs an interface to the 23LCV1024 chip.
      */
-    Chip_23LCV1024();
+    Chip_23LCV();
 
     /**
      * @brief Initializes the chip interface and SPI

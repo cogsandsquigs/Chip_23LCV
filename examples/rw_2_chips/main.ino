@@ -1,9 +1,9 @@
 SYSTEM_MODE(MANUAL);
 SYSTEM_THREAD(ENABLED);
 
-#include "Chip_23LCV1024.h"
+#include "Chip_23LCV.h"
 
-Chip_23LCV1024 Memory;
+Chip_23LCV Memory;
 
 void setup()
 {
