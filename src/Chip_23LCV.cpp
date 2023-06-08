@@ -5,30 +5,30 @@
 
 Chip_23LCV::Chip_23LCV() {}
 
-void Chip_23LCV::begin(pin_t cs1)
+void Chip_23LCV::begin(pin_t chips1)
 {
-    this->cs = new pin_t[1]{cs1};
-    cs_num = 1;
-    pinMode(cs1, OUTPUT);
-    digitalWrite(cs1, HIGH);
+    this->chips = new pin_t[1]{chips1};
+    chip_count = 1;
+    pinMode(chips1, OUTPUT);
+    digitalWrite(chips1, HIGH);
 }
 
-void Chip_23LCV::begin(pin_t cs1, pin_t cs2)
+void Chip_23LCV::begin(pin_t chips1, pin_t chips2)
 {
-    this->cs = new pin_t[2]{cs1, cs2};
-    cs_num = 2;
-    pinMode(cs1, OUTPUT);
-    pinMode(cs2, OUTPUT);
-    digitalWrite(cs1, HIGH);
-    digitalWrite(cs2, HIGH);
+    this->chips = new pin_t[2]{chips1, chips2};
+    chip_count = 2;
+    pinMode(chips1, OUTPUT);
+    pinMode(chips2, OUTPUT);
+    digitalWrite(chips1, HIGH);
+    digitalWrite(chips2, HIGH);
 }
 
 void Chip_23LCV::write(uint32_t address, byte *data, int length)
 {
     /**
      * Write to the specified address. If the data is longer than a single
-     * 23LCV1024 chip, write to the next chip in `cs`. If the address is
-     * greater than the end of the chip, write to the next chip in `cs`.
+     * 23LCV1024 chip, write to the next chip in `chips`. If the address is
+     * greater than the end of the chip, write to the next chip in `chips`.
      */
 
     // Calculate the starting chip index.
@@ -37,9 +37,9 @@ void Chip_23LCV::write(uint32_t address, byte *data, int length)
 
     // Calculate how many chips we need to write to.
     uint32_t chip_count = ((address % CHIP_SIZE) + length) / CHIP_SIZE + 1;
-    if (chip_count > cs_num)
+    if (chip_count > chip_count)
     {
-        chip_count = cs_num;
+        chip_count = chip_count;
     }
 
     // Write to each chip.
@@ -89,12 +89,12 @@ void Chip_23LCV::write_single_chip(uint32_t chip, uint32_t address, byte data[],
         writing[i + 4] = data[i];
     }
 
-    SPI.begin(cs[chip]);
+    SPI.begin(chips[chip]);
     SPI.beginTransaction();
     SPI.setDataMode(SPI_MODE0);
-    digitalWrite(cs[chip], LOW);
+    digitalWrite(chips[chip], LOW);
     SPI.transfer(writing, NULL, length + 4, nullptr);
-    digitalWrite(cs[chip], HIGH);
+    digitalWrite(chips[chip], HIGH);
     SPI.endTransaction();
     SPI.end();
 }
@@ -103,8 +103,8 @@ void Chip_23LCV::read(uint32_t address, byte *(&data), int length)
 {
     /**
      * Read from the specified address. If the data is longer than a single
-     * 23LCV1024 chip, read from the next chip in `cs`. If the address is
-     * greater than the end of the chip, read from the next chip in `cs`.
+     * 23LCV1024 chip, read from the next chip in `chips`. If the address is
+     * greater than the end of the chip, read from the next chip in `chips`.
      */
 
     // Calculate the starting chip index.
@@ -113,9 +113,9 @@ void Chip_23LCV::read(uint32_t address, byte *(&data), int length)
 
     // Calculate how many chips we need to read from.
     uint32_t chip_count = ((address % CHIP_SIZE) + length) / CHIP_SIZE + 1;
-    if (chip_count > cs_num)
+    if (chip_count > chip_count)
     {
-        chip_count = cs_num;
+        chip_count = chip_count;
     }
 
     byte read[length];
@@ -155,10 +155,10 @@ byte Chip_23LCV::read_byte(uint32_t address)
 
 void Chip_23LCV::read_single_chip(uint32_t chip, uint32_t address, byte (&data)[], uint length)
 {
-    SPI.begin(cs[chip]);
+    SPI.begin(chips[chip]);
     SPI.setDataMode(SPI_MODE0);
 
-    digitalWrite(cs[chip], LOW);
+    digitalWrite(chips[chip], LOW);
 
     SPI.transfer(0x03); // Read command
 
@@ -169,7 +169,7 @@ void Chip_23LCV::read_single_chip(uint32_t chip, uint32_t address, byte (&data)[
 
     SPI.transfer(NULL, data, length, nullptr);
 
-    digitalWrite(cs[chip], HIGH);
+    digitalWrite(chips[chip], HIGH);
 
     SPI.end();
 }

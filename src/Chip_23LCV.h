@@ -11,17 +11,17 @@ public:
     /**
      * @brief Initializes the chip interface and SPI
      *
-     * @param cs1 The chip select pin to use for all of the memory addresses.
+     * @param chips1 The chip select pin to use for all of the memory addresses.
      */
-    void begin(pin_t cs1);
+    void begin(pin_t chips1);
 
     /**
      * @brief Initializes the chip interface and SPI
      *
-     * @param cs1 The chip select pin to use for the lower half of the memory addresses.
-     * @param cs2 The chip select pin to use for the upper half of the memory addresses.
+     * @param chips1 The chip select pin to use for the lower half of the memory addresses.
+     * @param chips2 The chip select pin to use for the upper half of the memory addresses.
      */
-    void begin(pin_t cs1, pin_t cs2);
+    void begin(pin_t chips1, pin_t chips2);
 
     /**
      * @brief Writes bytes to the specified address.
@@ -82,6 +82,6 @@ private:
      */
     void read_single_chip(uint32_t chip, uint32_t address, byte (&data)[], uint length);
 
-    pin_t *cs;
-    uint32_t cs_num;
+    pin_t *chips;
+    uint32_t chip_count;
 };
