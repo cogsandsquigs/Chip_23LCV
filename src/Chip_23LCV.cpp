@@ -119,7 +119,6 @@ void Chip_23LCV::read(uint32_t address, byte *(&data), int length)
 		// Calculate the data to read.
 		uint32_t data_start = length - remaining_bytes;
 		uint32_t data_length = min((chip_size - chip_address), remaining_bytes);
-
 		// Read from the chip.
 		read_single_chip(this->chips[i].pin, chip_address, this->chips[i].address_size, read, data_length);
 
