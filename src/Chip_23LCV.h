@@ -92,28 +92,6 @@ private:
 	 */
 	uint32_t get_chip_count(uint32_t address, uint32_t chip_index, uint32_t length);
 
-	/**
-	 * @brief Writes bytes to the specified chip and address.
-	 *
-	 * @param pin The pin of the chip to write to.
-	 * @param address The address to write to.
-	 * @param address_size The number of bytes in the address.
-	 * @param data The data to write.
-	 * @param length The number of bytes to write.
-	 */
-	void write_single_chip(pin_t pin, uint32_t address, uint32_t address_size, byte data[], uint length);
-
-	/**
-	 * @brief Reads bytes from the specified chip and address.
-	 *
-	 * @param pin The index of the chip to read from.
-	 * @param address The address to read from.
-	 * @param address_size The number of bytes in the address.
-	 * @param data The buffer to read the data into.
-	 * @param length The number of bytes to read.
-	 */
-	void read_single_chip(pin_t pin, uint32_t address, uint32_t address_size, byte (&data)[], uint length);
-
 	class Chip
 	{
 
@@ -158,3 +136,25 @@ private:
 	 */
 	uint32_t chip_count;
 };
+
+/**
+ * @brief Writes bytes to the specified chip and address.
+ *
+ * @param pin The pin of the chip to write to.
+ * @param address The address to write to.
+ * @param address_size The number of bytes in the address.
+ * @param data The data to write.
+ * @param length The number of bytes to write.
+ */
+void write_single_chip(pin_t pin, uint32_t address, uint32_t address_size, byte data[], uint length);
+
+/**
+ * @brief Reads bytes from the specified chip and address.
+ *
+ * @param pin The index of the chip to read from.
+ * @param address The address to read from.
+ * @param address_size The number of bytes in the address.
+ * @param data The buffer to read the data into.
+ * @param length The number of bytes to read.
+ */
+void read_single_chip(pin_t pin, uint32_t address, uint32_t address_size, byte (&data)[], uint length);

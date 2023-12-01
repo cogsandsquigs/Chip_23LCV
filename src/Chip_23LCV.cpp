@@ -251,9 +251,9 @@ uint32_t Chip_23LCV::get_chip_count(uint32_t address, uint32_t chip_index,
 	return -1;
 }
 
-void Chip_23LCV::write_single_chip(pin_t pin, uint32_t address,
-								   uint32_t address_size, byte data[],
-								   uint length)
+void write_single_chip(pin_t pin, uint32_t address,
+					   uint32_t address_size, byte data[],
+					   uint length)
 {
 
 	byte writing[length + address_size + 1];
@@ -289,9 +289,9 @@ void Chip_23LCV::write_single_chip(pin_t pin, uint32_t address,
 	SPI.end();
 }
 
-void Chip_23LCV::read_single_chip(pin_t pin, uint32_t address,
-								  uint32_t address_size, byte (&data)[],
-								  uint length)
+void read_single_chip(pin_t pin, uint32_t address,
+					  uint32_t address_size, byte (&data)[],
+					  uint length)
 {
 	SPI.begin(pin);
 	SPI.setDataMode(SPI_MODE0);
@@ -310,8 +310,17 @@ void Chip_23LCV::read_single_chip(pin_t pin, uint32_t address,
 		SPI.transfer((address >> (8 * (address_size - i - 1))) & 0xFF);
 	}
 
-	// Read the incoming data from the chip.
-	SPI.transfer(NULL, data, length, nullptr);
+	// // Read the incoming data from the chip.
+	// SPI.transfer(NULL, data, length, NULL);
+
+	// For some reason, the above 2 lines of code don't work. When reading 3 or less bytes
+	// from the chip, the first byte is always 0x00. So we have to do this instead.
+	// TODO: Figure out the underlying reason why the above 2 lines of code don't work.
+
+	for (uint32_t i = 0; i < length; i++)
+	{
+		data[i] = SPI.transfer(0x00);
+	}
 
 	digitalWrite(pin, HIGH);
 
